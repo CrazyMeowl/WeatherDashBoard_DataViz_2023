@@ -202,7 +202,7 @@ class weather_class {
 			// console.log(d)
 			d.today_weather =  d.data[this.date]
 			if (d.today_weather.rain){
-
+				d.today_weather.rain += "mm"
 			} else {
 				d.today_weather.rain = "N/A"
 			}
@@ -218,16 +218,20 @@ class weather_class {
 			.attr("night_temp", d => d.today_weather.feels_like.night)
 			.attr("eve_temp", d => d.today_weather.feels_like.eve)
 			.attr("mor_temp", d => d.today_weather.feels_like.morn)
+
 			.attr("humidity", d => d.today_weather.humidity)
-			.attr("weather", d => d.today_weather.weather.description)
+			.attr("clouds", d => d.today_weather.clouds)
 			.attr("rain_prob", d => d.today_weather.pop)
-			.attr("cloud", d => d.today_weather.clouds)
 			.attr("rain", d => d.today_weather.rain)
+
+			.attr("weather", d => d.today_weather.weather[0].description)
+
+			
 			.attr("fill", d => this.temp_color(d.today_weather.feels_like.day))
 			.style("stroke", "#000")
 			.attr("stroke-width", "0.2");
 
-		var tooltip = d3.select(".tooltip")
+		var tooltip = d3.select(".toolTip")
 			// .append("div")
 			// .attr("class", "tooltip")
 			// .attr("id","tooltip")
@@ -238,14 +242,30 @@ class weather_class {
 
 		svg.selectAll("path")
 			.on("mouseover", function(event) {
-				
 				// Show the tooltip
 				tooltip.style("visibility", "visible");
+				// console.log(d3.select(this).attr("name"));
 
+				d3.select("#name_text").html(`${d3.select(this).attr("name")} - ${document.getElementById("date_select").options[document.getElementById("date_select").selectedIndex].text}`)
 
+				d3.select("#mor_temp_text").html(`Morning : ${d3.select(this).attr("mor_temp")}°C`)
+				d3.select("#day_temp_text").html(`Day : ${d3.select(this).attr("day_temp")}°C`)
+				d3.select("#eve_temp_text").html(`Evening : ${d3.select(this).attr("eve_temp")}°C`)
+				d3.select("#night_temp_text").html(`Night : ${d3.select(this).attr("night_temp")}°C`)
+
+				d3.select("#humidity_text").html(`Humidity : ${d3.select(this).attr("humidity")}%`)
+				d3.select("#clouds_text").html(`Cloud : ${d3.select(this).attr("clouds")}%`)
+
+				d3.select("#rain_text").html(`Rain : ${d3.select(this).attr("rain")}`)
+				d3.select("#rain_prob_text").html(`Rain Prob : ${parseInt(parseFloat(d3.select(this).attr("rain_prob"))*100)}%`)
+
+				d3.select("#weather_text").html(`Weather : ${d3.select(this).attr("weather")}`)
 				// Set the tooltip content
-				tooltip.html("<h1>"+d3.select(this).attr("name") + "</h1><h2>Temperature</h2><h3>  Day: " + parseInt(d3.select(this).attr("day_temp")).toLocaleString() + "</h3><h3>  Rain: " + d3.select(this).attr("rain"))+"</h3>";
+				// tooltip.html("<h1>"+d3.select(this).attr("name") + "</h1><h2>Temperature</h2><h3>  Day: " + parseInt(d3.select(this).attr("day_temp")).toLocaleString() + "</h3><h3>  Rain: " + d3.select(this).attr("rain"))+"</h3>";
 				// tooltip.html("Country/Region: " );
+			})
+			.on("click", function(event) {
+				console.log(d3.select(this).attr("name"))
 			})
 			.on("mouseout", function(d) {
 				// Hide the tooltip
@@ -294,15 +314,18 @@ class weather_class {
 			.join("path")
 			.attr("d", de_path)
 			.attr("name", d => d.vietnamese_name)
+
 			.attr("day_temp", d => d.today_weather.feels_like.day)
 			.attr("night_temp", d => d.today_weather.feels_like.night)
 			.attr("eve_temp", d => d.today_weather.feels_like.eve)
 			.attr("mor_temp", d => d.today_weather.feels_like.morn)
+
 			.attr("humidity", d => d.today_weather.humidity)
-			.attr("weather", d => d.today_weather.weather.description)
+			.attr("clouds", d => d.today_weather.clouds)
 			.attr("rain_prob", d => d.today_weather.pop)
-			.attr("cloud", d => d.today_weather.clouds)
 			.attr("rain", d => d.today_weather.rain)
+
+			.attr("weather", d => d.today_weather.weather[0].description)
 			.attr("fill", d => this.temp_color(d.today_weather.feels_like.day))
 			.style("stroke", "#000")
 			.attr("stroke-width", "0.2");
