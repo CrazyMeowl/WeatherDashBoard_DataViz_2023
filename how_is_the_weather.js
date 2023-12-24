@@ -226,20 +226,14 @@ class weather_class {
 
 			.attr("weather", d => d.today_weather.weather[0].description)
 
-			
+			.attr("idPath",(d,i)=>i)
 			.attr("fill", d => this.temp_color(d.today_weather.feels_like.day))
 			.style("stroke", "#000")
 			.attr("stroke-width", "0.2");
 
-		var tooltip = d3.select(".toolTip")
-			// .append("div")
-			// .attr("class", "tooltip")
-			// .attr("id","tooltip")
-			// .style("position", "fixed")
-			// .style("visibility", "hidden")
-			// .style("top", "0")
-			// .style("right", "0");
-
+		var tooltip = d3.select(".toolTip");
+		// var svg = d3.select("#map_svg")
+		var self = this;
 		svg.selectAll("path")
 			.on("mouseover", function(event) {
 				// Show the tooltip
@@ -265,12 +259,15 @@ class weather_class {
 				// tooltip.html("Country/Region: " );
 			})
 			.on("click", function(event) {
-				console.log(d3.select(this).attr("name"))
+				self.select_item(d3.select(this).attr("idPath"))
+				// console.log(d3.select(this).attr("name"));
 			})
 			.on("mouseout", function(d) {
 				// Hide the tooltip
 				tooltip.style("visibility", "hidden");
 			});
+
+		
 	};
 
 	reload_map() {
@@ -315,11 +312,11 @@ class weather_class {
 			.attr("d", de_path)
 			.attr("name", d => d.vietnamese_name)
 
-			.attr("day_temp", d => d.today_weather.feels_like.day)
-			.attr("night_temp", d => d.today_weather.feels_like.night)
-			.attr("eve_temp", d => d.today_weather.feels_like.eve)
 			.attr("mor_temp", d => d.today_weather.feels_like.morn)
-
+			.attr("day_temp", d => d.today_weather.feels_like.day)
+			.attr("eve_temp", d => d.today_weather.feels_like.eve)
+			.attr("night_temp", d => d.today_weather.feels_like.night)
+		
 			.attr("humidity", d => d.today_weather.humidity)
 			.attr("clouds", d => d.today_weather.clouds)
 			.attr("rain_prob", d => d.today_weather.pop)
@@ -330,11 +327,101 @@ class weather_class {
 			.style("stroke", "#000")
 			.attr("stroke-width", "0.2");
 
-		
+	
 
 		
 	};
 
+
+	select_item(input_id){
+		// console.log("ID"+input_id);
+		this.selected = this.json.features[input_id]
+		console.log(this.selected.data);
+		// this.selected.data 
+		this.selected.processed_data = []
+		this.selected.data.forEach( d =>{
+			
+			let datetime = new Date(d.dt*1000);
+			var date = datetime.getDate();
+			var month = datetime.getMonth() + 1;
+			var year = 1900 + parseInt(datetime.getYear());
+			var date_string = `${year}-${month}-${date}`;
+			if (!d.rain || d.rain == 'N/A'){
+				d.rain = 0;
+			}
+			var test_subject = {date:date_string,mor_temp:d.feels_like.morn,day_temp:d.feels_like.day,eve_temp:d.feels_like.eve,night_temp:d.feels_like.night,humidity:d.humidity,clouds:d.clouds,rain_prob:d.pop,rain:d.rain}
+			this.selected.processed_data.push(test_subject)
+		})
+		console.log(this.selected.processed_data)
+		this.load_line_chart();
+		this.load_bar_chart();
+		this.load_rain_chart();
+	}
+
+	load_line_chart(){
+
+	    var line_config = {
+	      data: this.selected.processed_data,
+	      xkey: 'date',
+	      ykeys: ['mor_temp', 'day_temp','eve_temp','night_temp'],
+	      labels: ['Morning Temp', 'Day Temp','Evening Temp','Night Temp'],
+	      fillOpacity: 0.6,
+	      hideHover: 'auto',
+	      behaveLikeLine: true,
+	      resize: true,
+	      pointFillColors:['#ffffff'],
+	      pointStrokeColors: ['black'],
+	      // lineColors:['gray','red']
+	  	};
+
+		line_config.element = 'line-chart';
+		Morris.Line(line_config);
+
+	
+	}
+
+	load_bar_chart(){
+
+	    var bar_config = {
+	      data: this.selected.processed_data,
+	      xkey: 'date',
+	      ykeys: ['humidity','clouds','rain_prob'],
+	      labels: ['Humidity','Clouds','Rain Probablity'],
+	      fillOpacity: 0.6,
+	      hideHover: 'auto',
+	      behaveLikeLine: true,
+	      resize: true,
+	      pointFillColors:['#ffffff'],
+	      pointStrokeColors: ['black'],
+	      // lineColors:['gray','red']
+	  	};
+
+		bar_config.element = 'bar-chart';
+		Morris.Bar(bar_config);
+
+	
+	}
+	load_rain_chart(){
+
+	    var rain_config = {
+	      data: this.selected.processed_data,
+	      xkey: 'date',
+	      ykeys: ['rain'],
+	      labels: ['Rain'],
+	      fillOpacity: 0.6,
+	      hideHover: 'auto',
+	      behaveLikeLine: true,
+	      resize: true,
+	      pointFillColors:['#ffffff'],
+	      pointStrokeColors: ['black'],
+	      // lineColors:['gray','red']
+	  	};
+
+		rain_config.element = 'rain-chart';
+		Morris.Bar(rain_config);
+
+	
+	}
 	temp_color(input_number) {
 		if (input_number > 41) {
 			return "#a60000";
