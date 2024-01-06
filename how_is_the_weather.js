@@ -94,7 +94,7 @@ class weather_class {
 		d3.select('#map_svg')
 			.call(this.zoom);
 		
-
+		this.init_all_chart();
 		// function 
 	}
 
@@ -347,21 +347,22 @@ class weather_class {
 			var year = 1900 + parseInt(datetime.getYear());
 			var date_string = `${year}-${month}-${date}`;
 			if (!d.rain || d.rain == 'N/A'){
-				d.rain = 0;
+				d.rain_ = 0;
+			} else {
+				d.rain_ = d.rain
 			}
-			var test_subject = {date:date_string,mor_temp:d.feels_like.morn,day_temp:d.feels_like.day,eve_temp:d.feels_like.eve,night_temp:d.feels_like.night,humidity:d.humidity,clouds:d.clouds,rain_prob:d.pop,rain:d.rain}
+			d.pop_ = parseInt(d.pop*100);
+			var test_subject = {date:date_string,mor_temp:d.feels_like.morn,day_temp:d.feels_like.day,eve_temp:d.feels_like.eve,night_temp:d.feels_like.night,humidity:d.humidity,clouds:d.clouds,rain_prob:d.pop_,rain:d.rain_}
 			this.selected.processed_data.push(test_subject)
 		})
 		console.log(this.selected.processed_data)
-		this.load_line_chart();
-		this.load_bar_chart();
-		this.load_rain_chart();
+		this.load_other_chart();
 	}
 
-	load_line_chart(){
+	init_all_chart(){
 
-	    var line_config = {
-	      data: this.selected.processed_data,
+	    this.temp_chart = Morris.Line({
+	      
 	      xkey: 'date',
 	      ykeys: ['mor_temp', 'day_temp','eve_temp','night_temp'],
 	      labels: ['Morning Temp', 'Day Temp','Evening Temp','Night Temp'],
@@ -371,19 +372,13 @@ class weather_class {
 	      resize: true,
 	      pointFillColors:['#ffffff'],
 	      pointStrokeColors: ['black'],
-	      // lineColors:['gray','red']
-	  	};
+	      element: 'line-chart',
 
-		line_config.element = 'line-chart';
-		Morris.Line(line_config);
+	  	});
 
-	
-	}
 
-	load_bar_chart(){
+	    this.stat_chart = Morris.Bar({
 
-	    var bar_config = {
-	      data: this.selected.processed_data,
 	      xkey: 'date',
 	      ykeys: ['humidity','clouds','rain_prob'],
 	      labels: ['Humidity','Clouds','Rain Probablity'],
@@ -393,18 +388,12 @@ class weather_class {
 	      resize: true,
 	      pointFillColors:['#ffffff'],
 	      pointStrokeColors: ['black'],
-	      // lineColors:['gray','red']
-	  	};
+	      element: 'bar-chart',
 
-		bar_config.element = 'bar-chart';
-		Morris.Bar(bar_config);
+	  	});
 
-	
-	}
-	load_rain_chart(){
+	    this.rain_chart = Morris.Bar({
 
-	    var rain_config = {
-	      data: this.selected.processed_data,
 	      xkey: 'date',
 	      ykeys: ['rain'],
 	      labels: ['Rain'],
@@ -414,14 +403,17 @@ class weather_class {
 	      resize: true,
 	      pointFillColors:['#ffffff'],
 	      pointStrokeColors: ['black'],
-	      // lineColors:['gray','red']
-	  	};
+	      element: 'rain-chart',
 
-		rain_config.element = 'rain-chart';
-		Morris.Bar(rain_config);
+	  	});
+	};
 
-	
+	load_other_chart(){
+		this.temp_chart.setData(this.selected.processed_data);
+		this.stat_chart.setData(this.selected.processed_data);
+		this.rain_chart.setData(this.selected.processed_data);
 	}
+	
 	temp_color(input_number) {
 		if (input_number > 41) {
 			return "#a60000";
