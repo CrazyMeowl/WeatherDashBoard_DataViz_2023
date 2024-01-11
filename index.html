@@ -1,244 +1,341 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Data Viz Project</title>
+    <script src="https://d3js.org/d3.v7.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 
-	<head>
-		<meta charset="utf-8">
-		<title>Data Viz Project</title>
-		<script src="https://d3js.org/d3.v7.js"></script>
-		<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-		<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+    <script src="./how_is_the_weather.js"></script>
 
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-			integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-		<script src="./how_is_the_weather.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"
+      integrity="sha512-tBzZQxySO5q5lqwLWfu8Q+o4VkTcRGOeQGVQ0ueJga4A1RKuzmAu5HXDOXLEjpbKyV7ow9ympVoa6wZLEzRzDg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"
+      integrity="sha512-6Cwk0kyyPu8pyO9DdwyN+jcGzvZQbUzQNLI0PadCY3ikWFXW9Jkat+yrnloE63dzAKmJ1WNeryPd1yszfj7kqQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css"
+      integrity="sha512-fjy4e481VEA/OTVR4+WHMlZ4wcX/+ohNWKpVfb7q+YNnOCS++4ZDn3Vi6EaA2HJ89VXARJt7VvuAKaQ/gs1CbQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.js"
+      integrity="sha512-CYkt9kgBjbQrIKQGbyezfkmhmmFwMF2VVZjdGgYJJm3KnV53Ao+aFnndz2YbmMX2Y8XGBCUzBxFTqg2LAuIJzw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
 
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Victor+Mono:ital,wght@0,100;0,600;1,500;1,700&display=swap");
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js" integrity="sha512-tBzZQxySO5q5lqwLWfu8Q+o4VkTcRGOeQGVQ0ueJga4A1RKuzmAu5HXDOXLEjpbKyV7ow9ympVoa6wZLEzRzDg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js" integrity="sha512-6Cwk0kyyPu8pyO9DdwyN+jcGzvZQbUzQNLI0PadCY3ikWFXW9Jkat+yrnloE63dzAKmJ1WNeryPd1yszfj7kqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css" integrity="sha512-fjy4e481VEA/OTVR4+WHMlZ4wcX/+ohNWKpVfb7q+YNnOCS++4ZDn3Vi6EaA2HJ89VXARJt7VvuAKaQ/gs1CbQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.js" integrity="sha512-CYkt9kgBjbQrIKQGbyezfkmhmmFwMF2VVZjdGgYJJm3KnV53Ao+aFnndz2YbmMX2Y8XGBCUzBxFTqg2LAuIJzw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      * {
+        font-family: "Victor Mono", monospace;
+      }
 
+      .toolTip {
+        border: 1px outset lightgray;
+        background-color: white;
+        font-size: 20px;
+        border-radius: 9px;
+        /*			visibility: visible;*/
+        visibility: hidden;
+      }
+      .no_margin {
+        margin: 0;
+        padding: 0;
+      }
 
-		<style>
-			@import url('https://fonts.googleapis.com/css2?family=Victor+Mono:ital,wght@0,100;0,600;1,500;1,700&display=swap');
+      .background {
+        background-color: #202020;
+        background-image: url("./img/tile_1.jpg");
 
-			* {
-				font-family: 'Victor Mono', monospace;
-			}
-
-			.toolTip {
-				border: 1px outset lightgray;
-				background-color: white;
-				font-size: 20px;
-				border-radius: 9px;
-	/*			visibility: visible;*/
-				visibility: hidden;
-			}
-			.no_margin {
-				margin: 0;
-				padding: 0;
-
-			}
-
-			.background {
-				background-color: #202020;
-				background-image: url("./img/tile_1.jpg");
-
-				background-size: cover;
-				background-blend-mode: 	multiply;
-
-			}
-	/*		div {
+        background-size: cover;
+        background-blend-mode: multiply;
+      }
+      /*		div {
 				border: 1px solid black;
 			}*/
-		</style>
+    </style>
+  </head>
 
-	</head>
+  <body>
+    <div class="container-fluid">
+      <!-- Main Upper Part -->
+      <div class="row">
+        <div class="col" style="max-width: 750px; padding: 0; margin: 0">
+          <svg id="map_svg" width="750" height="750"></svg>
+        </div>
 
-	<body>
+        <div class="col" style="min-width: 600px">
+          <!-- TOOLTIP -->
+          <div class="row toolTip text-wrap">
+            <div class="container-fluid">
+              <div class="col-12" id="name_div">
+                <h1 id="name_text">CityName</h1>
+                <br />
+              </div>
+              <div class="col">
+                <h3>Temperature</h3>
+              </div>
+              <div class="row" id="temp_div">
+                <div class="col-6" id="mor_temp_div">
+                  <p id="mor_temp_text">Morning: 0</p>
+                </div>
 
-		<div class="container-fluid">
+                <div class="col-6">
+                  <p id="day_temp_text">Day : 0</p>
+                </div>
 
-			<div class="row" >
-				<div class="col" style="max-width: 750px; padding: 0; margin: 0;">
-					<svg id="map_svg" width="750" height="750" ></svg>
-				</div>
-				<!-- TOOLTIP -->
-				<div class="col" style="min-width: 600px;">
-					<div class="row toolTip text-wrap">
-						<div class="container-fluid">
-							<div class="col-12" id="name_div">
-								<h1 id="name_text">CityName</h1>
-								<br>
-							</div>
-							<div class="col">
-								<h3>Temperature</h3>
-							</div>
-							<div class="row" id="temp_div">
-								
-								<div class="col-6" id="mor_temp_div">
-									<p id="mor_temp_text">Morning: 0</p>
-								</div>
+                <div class="col-6">
+                  <p id="eve_temp_text">Evening: 0</p>
+                </div>
 
-								<div class="col-6">
-									<p id="day_temp_text">Day : 0</p>
-								</div>
+                <div class="col-6">
+                  <p id="night_temp_text">Night: 0</p>
+                </div>
+              </div>
+              <br />
+              <div class="col">
+                <h3>Statictis</h3>
+              </div>
+              <div class="row" id="stat_div">
+                <div class="col-6">
+                  <p id="humidity_text">Humidity:</p>
+                </div>
 
-								<div class="col-6">
-									<p id="eve_temp_text">Evening: 0</p>
-								</div>
+                <div class="col-6">
+                  <p id="clouds_text">Cloud:</p>
+                </div>
 
-								<div class="col-6">
-									<p id="night_temp_text">Night: 0</p>
-								</div>
+                <div class="col-6">
+                  <p id="rain_prob_text">Rain Prob:</p>
+                </div>
 
-							</div>
-							<br>
-							<div class="col">
-								<h3>Statictis</h3>
-							</div>
-							<div class="row" id="stat_div">
-								
-								<div class="col-6">
-									<p id="humidity_text">Humidity:</p>
-								</div>
+                <div class="col-6">
+                  <p id="rain_text">Rainmeter:</p>
+                </div>
+              </div>
+              <div class="row" id="weather_div">
+                <div class="col-6">
+                  <h3 id="weather_text">Weather:</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END TOOLTIP -->
+          <!-- MAP CONTROL -->
+          <div class="row">
+            <div class="col-12">
+              <div class="row text-center justify-content-center">
+                <div class="d-flex justify-content-center">
+                  <!-- Temperature Mode Select -->
+                  <div class="col-4">
+                    <select
+                      id="temp_mode_select"
+                      onchange="weather_object.set_temp_mode()"
+                      style="padding: 12; margin: 5; border-radius: 5"
+                    >
+                      <option id="temp_mode_real" value="temp">
+                        Real Temperature
+                      </option>
+                      <option id="temp_mode_feel" value="feels_like">
+                        Feels Like Temperature
+                      </option>
+                    </select>
+                  </div>
+                  <!-- Previous Date Button -->
+                  <div class="col-2">
+                    <button
+                      type="button"
+                      class="btn btn-dark"
+                      onclick="weather_object.prev_date()"
+                    >
+                      Prev Day
+                    </button>
+                  </div>
+                  <!-- Date Select -->
+                  <div class="col-2">
+                    <select
+                      id="date_select"
+                      onchange="weather_object.set_date()"
+                      style="padding: 12; margin: 5; border-radius: 5"
+                    ></select>
+                  </div>
+                  <!-- Next Date Button -->
+                  <div class="col-2">
+                    <button
+                      type="button"
+                      class="btn btn-dark"
+                      onclick="weather_object.next_date()"
+                    >
+                      Next Day
+                    </button>
+                  </div>
+                </div>
+              </div>
 
-								<div class="col-6">
-									<p id="clouds_text">Cloud:</p>
-								</div>
+              <!-- Zoom Control Row -->
+              <div class="row text-center justify-content-center">
+                <!-- Zoom In Button -->
+                <div class="col-2">
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="weather_object.zoomIn()"
+                  >
+                    Zoom In
+                  </button>
+                </div>
+                <!-- Reset Zoom Button -->
+                <div class="col-2">
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="weather_object.resetZoom()"
+                  >
+                    Reset Zoom
+                  </button>
+                </div>
+                <!-- Zoom Out Button -->
+                <div class="col-2">
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="weather_object.zoomOut()"
+                  >
+                    Zoom Out
+                  </button>
+                </div>
+              </div>
 
-								<div class="col-6">
-									<p id="rain_prob_text">Rain Prob:</p>
-								</div>
+              <!-- Position Control Row -->
+              <div class="row text-center justify-content-center">
+                <!-- Pan Up Button -->
+                <div class="col-2">
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="weather_object.panUp()"
+                  >
+                    Pan Up
+                  </button>
+                </div>
+                <!-- Pan Left Button -->
+                <div class="col-2">
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="weather_object.panLeft()"
+                  >
+                    Pan Left
+                  </button>
+                </div>
+                <!-- Reset Position Button -->
+                <div class="col-2">
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="weather_object.center()"
+                  >
+                    Reset Position
+                  </button>
+                </div>
+                <!-- Pan Right Button -->
+                <div class="col-2">
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="weather_object.panRight()"
+                  >
+                    Pan Right
+                  </button>
+                </div>
+                <!-- Pan Down Button -->
+                <div class="col-2">
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    onclick="weather_object.panDown()"
+                  >
+                    Pan Down
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END MAP CONTROL -->
+        </div>
+      </div>
 
-								<div class="col-6">
-									<p id="rain_text">Rainmeter:</p>
-								</div>
+      <!-- To be loaded in later -->
+      <!-- Other Charts -->
+      <div class="row">
+        <!-- Temperature Chart -->
+        <div class="col-sm-12 text-center">
+          <div id="temp-chart"></div>
+          <label id="temp_label" class="label label-success"></label>
+        </div>
 
-							</div>
-							<div class="row" id="weather_div">
-								
-								<div class="col-6">
-									<h3 id="weather_text">Weather:</h3>
-								</div>
+        <!-- Statistic Chart -->
+        <div class="col-sm-12 text-center">
+          <div id="stat-chart"></div>
+          <label id="stat_label" class="label label-success"></label>
+        </div>
 
-								
+        <!-- Rain chart -->
+        <div class="col-sm-12 text-center">
+          <div id="rain-chart"></div>
+          <label id="rain_label" class="label label-success"></label>
+        </div>
+      </div>
+    </div>
 
-							</div>
+    <script type="text/javascript">
+      const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      let datetime = new Date();
+      var date_select = document.getElementById("date_select");
+      for (var offset = 0; offset <= 15; offset++) {
+        var opt = document.createElement("option");
+        var date = parseInt(datetime.getDate());
+        var day = weekday[datetime.getDay()];
+        var month = datetime.getMonth() + 1;
+        opt.id = `today+${offset}`;
+        opt.value = offset;
+        opt.innerHTML = `${day} ${date}/${month}`;
+        date_select.appendChild(opt);
+        datetime.setDate(datetime.getDate() + 1);
+      }
 
+      weather_object = new weather_class();
 
-						</div>
-					</div>
-					<!-- END TOOLTIP -->
-					<div class="row">
-
-					<!-- MAP CONTROL -->
-					<div  class="col-12">
-						<div class="row text-center justify-content-center">
-							<div class="d-flex justify-content-center">
-								<div  class="col-2">
-									<select id="key_select" onchange="weather_object.set_key()" style="padding: 12; margin: 5; border-radius: 5;"></select>
-								</div>
-		
-								<div  class="col-2">
-									<button type="button" class="btn btn-dark" onclick="weather_object.prev_date()">Prev Day</button>	
-								</div>
-		
-								<div  class="col-1">
-									<select id="date_select" onchange="weather_object.set_date()" style="padding: 12; margin: 5; border-radius: 5;"></select>
-								</div>
-		
-								<div  class="col-2">
-									<button type="button" class="btn btn-dark" onclick="weather_object.next_date()">Next Day</button>
-								</div>
-							</div>
-						</div>
-
-						<div class="row text-center justify-content-center">
-							<div  class="col-2">
-								<button type="button" class="btn btn-dark" onclick="weather_object.zoomIn()">Zoom In</button>
-							</div>
-							<div  class="col-2">
-								<button type="button" class="btn btn-dark" onclick="weather_object.resetZoom()"> Reset Zoom </button>
-							</div>
-							<div  class="col-2">
-								<button type="button" class="btn btn-dark" onclick="weather_object.zoomOut()">Zoom Out</button>
-							</div>
-						</div>
-						<div class="row text-center justify-content-center">
-							<div  class="col-2">
-								<button type="button" class="btn btn-dark" onclick="weather_object.panUp()">Pan Up</button>
-							</div>
-							<div  class="col-2">
-								<button type="button" class="btn btn-dark" onclick="weather_object.panLeft()">Pan Left</button>		
-							</div>
-							<div  class="col-2">
-								<button type="button" class="btn btn-dark" onclick="weather_object.center()">Reset Posi</button>
-							</div>
-							<div  class="col-2">
-								<button type="button" class="btn btn-dark" onclick="weather_object.panRight()">Pan Right</button>
-							</div>
-							<div  class="col-2">
-								<button type="button" class="btn btn-dark" onclick="weather_object.panDown()">Pan Down</button>
-							</div>
-						</div>
-					</div>
-					<!-- END MAP CONTROL -->
-					</div>
-				</div>
-			
-				
-
-			</div>
-			<!-- Charts -->
-			
-			<div class="row">
-
-				<div class="col-sm-12 text-center">
-					<div id="line-chart"></div>
-					<label id="temp_label" class="label label-success"></label>
-				</div>
-
-				<div  class="col-sm-12 text-center">
-					<div id="bar-chart" ></div>
-					<label id="stat_label" class="label label-success"></label>
-				</div>
-
-				<div  class="col-sm-12    text-center">
-					<div id="rain-chart" ></div>
-					<label id="rain_label" class="label label-success"></label>
-				</div>
-
-			</div>
-		
-
-
-		<script type="text/javascript">
-			const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-			let datetime = new Date();
-			var date_select = document.getElementById('date_select');
-			for (var offset = 0; offset <= 15; offset++) {
-				var opt = document.createElement('option');
-				var date = parseInt(datetime.getDate());
-				var day = weekday[datetime.getDay()];
-				var month = datetime.getMonth() + 1;
-				opt.id = `today+${offset}`;
-				opt.value = offset;
-				opt.innerHTML = `${day} ${date}/${month}`;
-				date_select.appendChild(opt);
-				datetime.setDate(datetime.getDate() + 1)
-			}
-
-			weather_object = new weather_class();
-
-
-
-			// var next_day_button = d3.select("#svg_1")
-
-		</script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-			integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-			crossorigin="anonymous"></script>
-	</body>
+      // var next_day_button = d3.select("#svg_1")
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

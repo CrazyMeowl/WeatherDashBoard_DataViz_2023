@@ -56,6 +56,7 @@ class weather_class {
         var res = await fetch(forecastUrl);
         var data = await res.json();
         d.data = data.list;
+        // console.log(data)
       })
     );
     this.load_map();
@@ -70,6 +71,8 @@ class weather_class {
     this.amount_of_day = 16;
     this.language = "en";
     this.units = "metric";
+    this.temp_mode = "temp";
+    this.selected = -9999;
 
     var map_svg = d3.select("#map_svg");
     this.map_width = map_svg.attr("width");
@@ -115,6 +118,12 @@ class weather_class {
       console.log(this.date);
       this.reload_map();
     }
+  }
+  set_temp_mode() {
+    this.temp_mode = document.getElementById("temp_mode_select").value;
+    console.log(this.temp_mode);
+    this.reload_map();
+    this.reprocess_temp_chart();
   }
 
   handleZoom(e) {
@@ -179,10 +188,12 @@ class weather_class {
     json.features.forEach((d) => {
       // console.log(d)
       d.today_weather = d.data[this.date];
+      // Rain handler
       if (d.today_weather.rain) {
-        d.today_weather.rain += "mm";
+        d.today_weather.rain_text = d.today_weather.rain + "mm";
       } else {
-        d.today_weather.rain = "N/A";
+        d.today_weather.rain = 0;
+        d.today_weather.rain_text = "N/A";
       }
     });
     svg
@@ -194,21 +205,21 @@ class weather_class {
       .append("path")
       .attr("d", de_path)
       .attr("name", (d) => d.vietnamese_name)
-      .attr("day_temp", (d) => d.today_weather.feels_like.day)
-      .attr("night_temp", (d) => d.today_weather.feels_like.night)
-      .attr("eve_temp", (d) => d.today_weather.feels_like.eve)
-      .attr("mor_temp", (d) => d.today_weather.feels_like.morn)
+      .attr("day_temp", (d) => d.today_weather[this.temp_mode].day)
+      .attr("night_temp", (d) => d.today_weather[this.temp_mode].night)
+      .attr("eve_temp", (d) => d.today_weather[this.temp_mode].eve)
+      .attr("mor_temp", (d) => d.today_weather[this.temp_mode].morn)
 
       .attr("humidity", (d) => d.today_weather.humidity)
       .attr("clouds", (d) => d.today_weather.clouds)
       .attr("rain_prob", (d) => d.today_weather.pop)
       .attr("rain", (d) => d.today_weather.rain)
-      .attr("rain_text", (d) => d.today_weather.rain)
+      .attr("rain_text", (d) => d.today_weather.rain_text)
 
       .attr("weather", (d) => d.today_weather.weather[0].description)
 
       .attr("idPath", (d, i) => i)
-      .attr("fill", (d) => this.temp_color(d.today_weather.feels_like.day))
+      .attr("fill", (d) => this.temp_color(d.today_weather[this.temp_mode].day))
       .style("stroke", "#000")
       .attr("stroke-width", "0.2");
 
@@ -250,7 +261,9 @@ class weather_class {
           `Cloud : ${d3.select(this).attr("clouds")}%`
         );
 
-        d3.select("#rain_text").html(`Rain : ${d3.select(this).attr("rain")}`);
+        d3.select("#rain_text").html(
+          `Rain : ${d3.select(this).attr("rain_text")}`
+        );
         d3.select("#rain_prob_text").html(
           `Rain Prob : ${parseInt(
             parseFloat(d3.select(this).attr("rain_prob")) * 100
@@ -313,10 +326,13 @@ class weather_class {
     json.features.forEach((d) => {
       // console.log(d)
       d.today_weather = d.data[this.date];
+
+      // Rain handler
       if (d.today_weather.rain) {
-        d.today_weather.rain += "mm";
+        d.today_weather.rain_text = d.today_weather.rain + "mm";
       } else {
-        d.today_weather.rain = "N/A";
+        d.today_weather.rain = "0";
+        d.today_weather.rain_text = "N/A";
       }
     });
     var the_map = d3.select("#the_map");
@@ -327,10 +343,10 @@ class weather_class {
       .attr("d", de_path)
       .attr("name", (d) => d.vietnamese_name)
 
-      .attr("mor_temp", (d) => d.today_weather.feels_like.morn)
-      .attr("day_temp", (d) => d.today_weather.feels_like.day)
-      .attr("eve_temp", (d) => d.today_weather.feels_like.eve)
-      .attr("night_temp", (d) => d.today_weather.feels_like.night)
+      .attr("mor_temp", (d) => d.today_weather[this.temp_mode].morn)
+      .attr("day_temp", (d) => d.today_weather[this.temp_mode].day)
+      .attr("eve_temp", (d) => d.today_weather[this.temp_mode].eve)
+      .attr("night_temp", (d) => d.today_weather[this.temp_mode].night)
 
       .attr("humidity", (d) => d.today_weather.humidity)
       .attr("clouds", (d) => d.today_weather.clouds)
@@ -338,7 +354,7 @@ class weather_class {
       .attr("rain", (d) => d.today_weather.rain)
 
       .attr("weather", (d) => d.today_weather.weather[0].description)
-      .attr("fill", (d) => this.temp_color(d.today_weather.feels_like.day))
+      .attr("fill", (d) => this.temp_color(d.today_weather[this.temp_mode].day))
       .style("stroke", "#000")
       .attr("stroke-width", "0.2");
   }
@@ -363,10 +379,10 @@ class weather_class {
       d.pop_ = parseInt(d.pop * 100);
       var test_subject = {
         date: date_string,
-        mor_temp: d.feels_like.morn,
-        day_temp: d.feels_like.day,
-        eve_temp: d.feels_like.eve,
-        night_temp: d.feels_like.night,
+        mor_temp: d[this.temp_mode].morn,
+        day_temp: d[this.temp_mode].day,
+        eve_temp: d[this.temp_mode].eve,
+        night_temp: d[this.temp_mode].night,
         humidity: d.humidity,
         clouds: d.clouds,
         rain_prob: d.pop_,
@@ -377,7 +393,37 @@ class weather_class {
     // console.log(this.selected.processed_data);
     this.load_other_chart();
   }
-
+  reprocess_temp_chart() {
+    if (this.selected != -9999) {
+      this.selected.processed_data = [];
+      this.selected.data.forEach((d) => {
+        let datetime = new Date(d.dt * 1000);
+        var date = datetime.getDate();
+        var month = datetime.getMonth() + 1;
+        var year = 1900 + parseInt(datetime.getYear());
+        var date_string = `${year}-${month}-${date}`;
+        if (!d.rain || d.rain == "N/A") {
+          d.rain_ = 0;
+        } else {
+          d.rain_ = d.rain;
+        }
+        d.pop_ = parseInt(d.pop * 100);
+        var test_subject = {
+          date: date_string,
+          mor_temp: d[this.temp_mode].morn,
+          day_temp: d[this.temp_mode].day,
+          eve_temp: d[this.temp_mode].eve,
+          night_temp: d[this.temp_mode].night,
+          humidity: d.humidity,
+          clouds: d.clouds,
+          rain_prob: d.pop_,
+          rain: d.rain_,
+        };
+        this.selected.processed_data.push(test_subject);
+      });
+      this.load_other_chart();
+    }
+  }
   init_all_chart() {
     this.temp_chart = Morris.Line({
       xkey: "date",
