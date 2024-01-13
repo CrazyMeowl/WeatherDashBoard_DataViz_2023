@@ -203,7 +203,8 @@ class weather_class {
       .data(json.features)
       .enter()
       .append("path")
-      .attr("d", de_path)
+      .attr("lat", (d) => d.lat)
+      .attr("lon", (d) => d.lon)
       .attr("name", (d) => d.vietnamese_name)
       .attr("day_temp", (d) => d.today_weather[this.temp_mode].day)
       .attr("night_temp", (d) => d.today_weather[this.temp_mode].night)
@@ -218,6 +219,7 @@ class weather_class {
 
       .attr("weather", (d) => d.today_weather.weather[0].description)
 
+      .attr("d", de_path)
       .attr("idPath", (d, i) => i)
       .attr("fill", (d) => this.temp_color(d.today_weather[this.temp_mode].day))
       .style("stroke", "#000")
@@ -340,7 +342,9 @@ class weather_class {
       .selectAll("path")
       .data(json.features)
       .join("path")
-      .attr("d", de_path)
+
+      .attr("lat", (d) => d.lat)
+      .attr("lon", (d) => d.lon)
       .attr("name", (d) => d.vietnamese_name)
 
       .attr("mor_temp", (d) => d.today_weather[this.temp_mode].morn)
@@ -354,6 +358,7 @@ class weather_class {
       .attr("rain", (d) => d.today_weather.rain)
 
       .attr("weather", (d) => d.today_weather.weather[0].description)
+      .attr("d", de_path)
       .attr("fill", (d) => this.temp_color(d.today_weather[this.temp_mode].day))
       .style("stroke", "#000")
       .attr("stroke-width", "0.2");
