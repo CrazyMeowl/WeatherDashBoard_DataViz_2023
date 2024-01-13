@@ -435,8 +435,9 @@ class weather_class {
       hideHover: "auto",
       behaveLikeLine: true,
       resize: true,
-      pointFillColors: ["#ffffff"],
-      pointStrokeColors: ["black"],
+      pointFillColors: ["#C9E4DE", "#FAEDCB", "#F7D9C4", "#6675da"], // Morning, Day, Evening, Night
+      pointStrokeColors: ["#000000"],
+      lineColors: ["#C9E4DE", "#FAEDCB", "#F7D9C4", "#6675da"], // Morning, Day, Evening, Night
       element: "temp-chart",
     });
 
@@ -450,8 +451,7 @@ class weather_class {
       hideHover: "auto",
       behaveLikeLine: true,
       resize: true,
-      pointFillColors: ["#ffffff"],
-      pointStrokeColors: ["black"],
+      barColors: ["#daeaf6", "#EEECF4", "#6675da"], //Humidity , Cloud , Rain
       element: "stat-chart",
     });
 
@@ -465,8 +465,7 @@ class weather_class {
       hideHover: "auto",
       behaveLikeLine: true,
       resize: true,
-      pointFillColors: ["#ffffff"],
-      pointStrokeColors: ["black"],
+      barColors: ["#6675da"], // Rain
       element: "rain-chart",
     });
   }

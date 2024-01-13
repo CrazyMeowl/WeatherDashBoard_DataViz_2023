@@ -74,6 +74,18 @@
         background-size: cover;
         background-blend-mode: multiply;
       }
+      .morris-chart text {
+        fill: black;
+        stroke: 0.5px black;
+      }
+      .chart-label {
+        fill: black;
+        stroke: 0.5px black;
+        color: black;
+      }
+      .morris-hover-point {
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 1);
+      }
       /*		div {
 				border: 1px solid black;
 			}*/
@@ -118,7 +130,7 @@
               </div>
               <br />
               <div class="col">
-                <h3>Statictis</h3>
+                <h3>Statistic</h3>
               </div>
               <div class="row" id="stat_div">
                 <div class="col-6">
@@ -328,20 +340,29 @@
       <div class="row">
         <!-- Temperature Chart -->
         <div class="col-sm-12 text-center">
-          <div id="temp-chart"></div>
-          <label id="temp_label" class="label label-success"></label>
+          <div id="temp-chart" class="morris-chart"></div>
+          <label
+            id="temp_label"
+            class="label label-success chart-label"
+          ></label>
         </div>
 
         <!-- Statistic Chart -->
         <div class="col-sm-12 text-center">
-          <div id="stat-chart"></div>
-          <label id="stat_label" class="label label-success"></label>
+          <div id="stat-chart" class="morris-chart"></div>
+          <label
+            id="stat_label"
+            class="label label-success chart-label"
+          ></label>
         </div>
 
         <!-- Rain chart -->
         <div class="col-sm-12 text-center">
-          <div id="rain-chart"></div>
-          <label id="rain_label" class="label label-success"></label>
+          <div id="rain-chart" class="morris-chart"></div>
+          <label
+            id="rain_label"
+            class="label label-success chart-label"
+          ></label>
         </div>
       </div>
     </div>
