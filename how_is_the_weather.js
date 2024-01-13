@@ -437,7 +437,7 @@ class weather_class {
       resize: true,
       pointFillColors: ["#ffffff"],
       pointStrokeColors: ["black"],
-      element: "line-chart",
+      element: "temp-chart",
     });
 
     this.stat_chart = Morris.Bar({
@@ -452,7 +452,7 @@ class weather_class {
       resize: true,
       pointFillColors: ["#ffffff"],
       pointStrokeColors: ["black"],
-      element: "bar-chart",
+      element: "stat-chart",
     });
 
     this.rain_chart = Morris.Bar({
