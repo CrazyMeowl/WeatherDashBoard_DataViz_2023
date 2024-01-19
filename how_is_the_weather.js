@@ -9,6 +9,7 @@ class weather_class {
     await Promise.all(
       this.json.features.map(async (d) => {
         d.name = d.properties.Name.replace(" Province", "").replace("City", "");
+        // Exception where OpenWeather does not recognize the province name.
         if (d.name == "Dak Lak") {
           d.name = "Buon Ma Thuot";
           // console.log(d.name)
